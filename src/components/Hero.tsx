@@ -1,55 +1,55 @@
-import { profile } from '../data/content'
+import { profile, now } from '../data/content'
 import { GithubIcon, LinkedinIcon, MailIcon, DownloadIcon, ArrowIcon } from './icons'
-
-const stats = [
-  { value: '730+', label: 'LLM outputs analyzed' },
-  { value: '37', label: 'REST + SSE endpoints shipped' },
-  { value: '20k+', label: 'NBA records in ETL' },
-]
 
 export function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero__glow" aria-hidden="true" />
-      <div className="shell">
-        <p className="hero__eyebrow">
-          <span className="pulse" aria-hidden="true" />
-          {profile.role} · {profile.location}
-        </p>
+      <div className="col">
+        <div className="hero__id">
+          <span className="hero__avatar" aria-hidden="true">
+            DP
+          </span>
+          <div>
+            <div className="hero__handle">{profile.name}</div>
+            <div className="hero__role">{profile.role}</div>
+          </div>
+        </div>
 
-        <h1 className="hero__name">{profile.name}</h1>
+        <h1 className="hero__headline">
+          I build software for problems that are <em>actually happening</em>.
+        </h1>
 
-        <p className="hero__tagline">{profile.tagline}</p>
+        <p className="hero__intro">{profile.intro}</p>
 
         <div className="hero__cta">
-          <a className="btn btn--primary" href="#projects">
-            View work <ArrowIcon />
+          <a className="btn btn--solid" href="#work">
+            View my work <ArrowIcon />
           </a>
-          <a className="btn btn--ghost" href={profile.resume} download>
+          <a className="btn" href={profile.github} target="_blank" rel="noreferrer noopener">
+            <GithubIcon /> GitHub
+          </a>
+          <a className="btn" href={profile.linkedin} target="_blank" rel="noreferrer noopener">
+            <LinkedinIcon /> LinkedIn
+          </a>
+          <a className="btn" href={profile.resume} download>
             <DownloadIcon /> Resume
           </a>
-        </div>
-
-        <div className="hero__social">
-          <a href={profile.github} target="_blank" rel="noreferrer noopener" aria-label="GitHub">
-            <GithubIcon />
-          </a>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer noopener" aria-label="LinkedIn">
-            <LinkedinIcon />
-          </a>
-          <a href={`mailto:${profile.email}`} aria-label="Email">
-            <MailIcon />
+          <a className="btn" href="#contact">
+            <MailIcon /> Contact
           </a>
         </div>
 
-        <dl className="hero__stats">
-          {stats.map((s) => (
-            <div key={s.label} className="hero__stat">
-              <dt>{s.value}</dt>
-              <dd>{s.label}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="now">
+          <div className="now__head">
+            <span className="pulse" aria-hidden="true" />
+            <span className="mono-label">Currently</span>
+          </div>
+          <ul className="now__list">
+            {now.map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   )

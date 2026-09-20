@@ -3,11 +3,11 @@ import { profile } from '../data/content'
 export function Footer() {
   return (
     <footer className="footer">
-      <div className="shell footer__inner">
-        <p>
+      <div className="col footer__inner">
+        <span>
           © {new Date().getFullYear()} {profile.name}
-        </p>
-        <p className="footer__built">Built with React, TypeScript and Vite · Deployed on Cloudflare Pages</p>
+        </span>
+        <span>React · TypeScript · Vite — deployed on Cloudflare</span>
       </div>
     </footer>
   )

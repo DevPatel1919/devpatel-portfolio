@@ -1,44 +1,67 @@
-import { education, profile } from '../data/content'
+import { about, experience, skills } from '../data/content'
 import { Section } from './Section'
+import { Reveal } from './Reveal'
 
 export function About() {
   return (
-    <Section id="about" eyebrow="01" title="About">
-      <div className="about">
-        <div className="about__body">
-          <p className="about__lede">{profile.summary}</p>
-          <p>
-            Right now that means production LLM reliability work at Vitruvix — structured outputs,
-            deterministic guardrails, and fallback logic wrapped around self-hosted models, plus the
-            eval work to prove the guardrails actually hold. Before that I was the founding developer
-            at a fintech startup, building a swap valuation engine where a rounding error is a bug
-            with a dollar value attached.
-          </p>
-          <p>
-            I like problems with a sharp definition of correct: air-gapped software that genuinely
-            cannot phone home, multi-tenant schemas where a leak between tenants is unthinkable, and
-            audit logs that are append-only because they are hash-chained, not because everyone
-            agreed to be careful.
-          </p>
+    <Section id="about" index="04 / BACKGROUND" title="About">
+      <Reveal>
+        <div className="about">
+          {about.map((p) => (
+            <p key={p.slice(0, 40)}>{p}</p>
+          ))}
         </div>
+      </Reveal>
 
-        <aside className="about__card">
-          <h3>Education</h3>
-          <p className="about__school">{education.school}</p>
-          <p className="about__meta">
-            {education.degree}
-            <br />
-            {education.location} · {education.date}
-          </p>
-          <div className="about__tags">
-            {education.activities.map((a) => (
-              <span key={a} className="tag">
-                {a}
-              </span>
-            ))}
-          </div>
-        </aside>
-      </div>
+      <Reveal>
+        <h3 className="mono-label" style={{ marginTop: '34px', display: 'block' }}>
+          Experience
+        </h3>
+        <div className="xp">
+          {experience.map((x) => (
+            <div className="xp__item" key={`${x.title}-${x.org}`}>
+              <div>
+                <div className="xp__title">{x.title}</div>
+                <div className="xp__org">
+                  {x.current && <span className="pulse" aria-hidden="true" />}
+                  {x.org}
+                </div>
+              </div>
+              <div className="xp__period">{x.period}</div>
+              <p className="xp__detail">{x.detail}</p>
+              {x.tags.length > 0 && (
+                <div className="xp__tags chips">
+                  {x.tags.map((t) => (
+                    <span key={t} className="chip">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Reveal>
+
+      <Reveal>
+        <h3 className="mono-label" style={{ marginTop: '34px', display: 'block' }}>
+          Skills
+        </h3>
+        <div className="skills">
+          {skills.map((g) => (
+            <div className="skills__group" key={g.group}>
+              <div className="skills__label">{g.group}</div>
+              <div className="chips">
+                {g.items.map((i) => (
+                  <span key={i} className="chip">
+                    {i}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
     </Section>
   )
 }

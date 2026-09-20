@@ -1,9 +1,10 @@
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
-import { About } from './components/About'
-import { Experience } from './components/Experience'
+import { Marquee } from './components/Marquee'
+import { Building } from './components/Building'
 import { Projects } from './components/Projects'
-import { Skills } from './components/Skills'
+import { Curious } from './components/Curious'
+import { About } from './components/About'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 
@@ -16,10 +17,15 @@ export default function App() {
       <Nav />
       <main id="main">
         <Hero />
-        <About />
-        <Experience />
+        <Marquee />
+        <Building />
+        <hr className="rule" />
         <Projects />
-        <Skills />
+        <hr className="rule" />
+        <Curious />
+        <hr className="rule" />
+        <About />
+        <hr className="rule" />
         <Contact />
       </main>
       <Footer />

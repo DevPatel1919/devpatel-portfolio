@@ -7,12 +7,14 @@ Personal portfolio site for Dev Patel — Software Engineer / AI Engineer.
 ## Stack
 
 - **React 19** + **TypeScript**, built with **Vite**
-- Hand-written CSS using design tokens on `:root`, with a light/dark theme
-  toggle persisted to `localStorage` and applied before first paint to avoid a
-  flash of the wrong theme
-- No CSS framework and no runtime dependencies beyond React — the whole page
-  ships as ~77 kB gzipped JS plus 4 kB of CSS
-- Deployed as a static site on **Cloudflare Pages**
+- Hand-written CSS using design tokens on `:root`. Dark is the designed
+  default; light is a supported alternate. The theme is persisted to
+  `localStorage` and applied before first paint to avoid a flash.
+- Type is doing the work: **Instrument Serif** for headings, **JetBrains Mono**
+  for body copy. No CSS framework, no runtime dependencies beyond React.
+- Motion is limited to a paused-on-hover tech marquee and a single scroll-reveal
+  fade, both disabled under `prefers-reduced-motion`.
+- Deployed as a static site on **Cloudflare**
 
 ## Content
 
@@ -20,9 +22,14 @@ All site copy lives in [`src/data/content.ts`](src/data/content.ts) — profile,
 experience, projects, and skills. Editing that one file updates the whole page;
 no component changes needed to add a job or a project.
 
-Projects in private repositories render with a "Private repository" badge and no
-link, so nothing on the public site 404s for a visitor. Flip a repo public and
-add an entry to that project's `links` array to surface the source.
+Each project answers the same four questions — problem, what I built, the hard
+part, and the takeaway — plus an optional expandable engineering note and an
+inline SVG architecture diagram (`src/components/ArchDiagram.tsx`, keyed by the
+project's `diagram` field).
+
+Projects in private repositories render a `private repo` marker instead of a
+dead link. Flip a repo public and add an entry to that project's `links` array
+to surface the source.
 
 ## Local development
 

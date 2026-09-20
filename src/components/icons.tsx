@@ -90,3 +90,23 @@ export function LockIcon() {
     </svg>
   )
 }
+
+export function CaretIcon() {
+  return (
+    <svg
+      className="disclosure__caret"
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m9 5 7 7-7 7" />
+    </svg>
+  )
+}
