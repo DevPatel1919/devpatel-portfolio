@@ -12,3 +12,6 @@ dist-ssr
 
 # Original resume source (served copy lives in public/)
 Dev_Patel_September_2026.pdf
+
+.dev.vars*
+!.dev.vars.example

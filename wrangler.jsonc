@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "devpatel-portfolio",
+  "compatibility_date": "2026-09-18",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // Vite writes the static build here; `npm run build` must run before deploy.
+    "directory": "./dist",
+    // Single-page app: unknown paths fall back to index.html rather than 404ing.
+    "not_found_handling": "single-page-application"
+  }
+}

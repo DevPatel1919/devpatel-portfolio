@@ -2,7 +2,7 @@
 
 Personal portfolio site for Dev Patel — Software Engineer / AI Engineer.
 
-**Live:** https://devpatel-portfolio.pages.dev
+**Live:** https://devpatel-portfolio.devpatel121904.workers.dev
 
 ## Stack
 
