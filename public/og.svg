@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0d13"/>
+      <stop offset="100%" stop-color="#1a1636"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0" r="0.75">
+      <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="80" y="86" width="64" height="64" rx="15" fill="#4f46e5"/>
+  <text x="112" y="130" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff" text-anchor="middle">DP</text>
+  <text x="80" y="300" font-family="Inter, Helvetica, Arial, sans-serif" font-size="94" font-weight="700" fill="#f0f2f8" letter-spacing="-3">Dev Patel</text>
+  <text x="80" y="366" font-family="Inter, Helvetica, Arial, sans-serif" font-size="36" font-weight="600" fill="#a5b4fc">Software Engineer / AI Engineer</text>
+  <text x="80" y="446" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27" fill="#a4abbd">LLM validation pipelines · financial swap engines</text>
+  <text x="80" y="488" font-family="Inter, Helvetica, Arial, sans-serif" font-size="27" fill="#a4abbd">air-gapped desktop tooling</text>
+  <text x="80" y="566" font-family="Inter, Helvetica, Arial, sans-serif" font-size="23" fill="#767e93">github.com/DevPatel1919</text>
+</svg>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dev Patel — Software Engineer / AI Engineer</title>
+    <meta
+      name="description"
+      content="Dev Patel is a software and AI engineer building production LLM validation pipelines, financial swap engines, and air-gapped desktop tooling. UCF Computer Science."
+    />
+    <meta name="author" content="Dev Patel" />
+    <link rel="canonical" href="https://devpatel-portfolio.pages.dev/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://devpatel-portfolio.pages.dev/" />
+    <meta property="og:title" content="Dev Patel — Software Engineer / AI Engineer" />
+    <meta
+      property="og:description"
+      content="Production LLM validation pipelines, financial swap engines, and air-gapped desktop tooling."
+    />
+    <meta property="og:image" content="https://devpatel-portfolio.pages.dev/og.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dev Patel — Software Engineer / AI Engineer" />
+    <meta
+      name="twitter:description"
+      content="Production LLM validation pipelines, financial swap engines, and air-gapped desktop tooling."
+    />
+    <meta name="twitter:image" content="https://devpatel-portfolio.pages.dev/og.svg" />
+
+    <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0d13" media="(prefers-color-scheme: dark)" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Dev Patel",
+        "jobTitle": "Software Engineer / AI Engineer",
+        "email": "mailto:devpatel121904@gmail.com",
+        "url": "https://devpatel-portfolio.pages.dev/",
+        "sameAs": [
+          "https://github.com/DevPatel1919",
+          "https://www.linkedin.com/in/thedevspatel/"
+        ],
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "University of Central Florida"
+        },
+        "worksFor": {
+          "@type": "Organization",
+          "name": "United Financial Services"
+        },
+        "knowsAbout": [
+          "Python",
+          "TypeScript",
+          "Rust",
+          "Large Language Models",
+          "FastAPI",
+          "React",
+          "PostgreSQL"
+        ]
+      }
+    </script>
+
+    <script>
+      // Apply the stored theme before first paint so there is no flash.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme')
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
