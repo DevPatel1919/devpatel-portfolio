@@ -2,7 +2,7 @@
 
 Personal portfolio site for Dev Patel — Software Engineer / AI Engineer.
 
-**Live:** https://devpatel-portfolio.devpatel121904.workers.dev
+**Live:** https://devpatel.us
 
 ## Stack
 
@@ -42,16 +42,22 @@ npm run preview    # serve the production build locally
 
 ## Deployment
 
-Pushes to `main` are built and deployed by Cloudflare Pages.
-
-- **Build command:** `npm run build`
-- **Output directory:** `dist`
-
-To deploy the current build manually:
+Deployed to Cloudflare as a Worker serving static assets (not Pages), so the
+config lives in `wrangler.jsonc` rather than in a Pages project:
 
 ```bash
-npx wrangler pages deploy dist --project-name=devpatel-portfolio
+npm run deploy     # npm run build && wrangler deploy
 ```
+
+`devpatel.us` and `www.devpatel.us` are declared as custom domains in
+`wrangler.jsonc`. Cloudflare creates the DNS records and issues the certificate
+on the first deploy that includes them; the zone must already be active in the
+same account.
+
+Note that declaring `routes` disables the `*.workers.dev` origin unless
+`"workers_dev": true` is set explicitly, so the old
+`devpatel-portfolio.devpatel121904.workers.dev` address now 404s. That is
+intentional: `devpatel.us` is the single canonical origin.
 
 `public/_headers` sets security headers (`nosniff`, `DENY` framing,
 `strict-origin-when-cross-origin` referrer) and long-lived immutable caching for
@@ -64,7 +70,7 @@ public/            Static assets served at the site root
   Dev_Patel_Resume.pdf
   favicon.svg      Inline SVG mark
   og.svg           Open Graph / social preview card
-  _headers         Cloudflare Pages header rules
+  _headers         Cloudflare header rules
   robots.txt
   sitemap.xml
 src/

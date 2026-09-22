@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://devpatel-portfolio.devpatel121904.workers.dev/sitemap.xml
+Sitemap: https://devpatel.us/sitemap.xml

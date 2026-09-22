@@ -2,6 +2,12 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "devpatel-portfolio",
   "compatibility_date": "2026-09-18",
+  // Custom domains. Cloudflare provisions the DNS records and the TLS cert on
+  // deploy; the zone has to already exist in this account for that to work.
+  "routes": [
+    { "pattern": "devpatel.us", "custom_domain": true },
+    { "pattern": "www.devpatel.us", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   },

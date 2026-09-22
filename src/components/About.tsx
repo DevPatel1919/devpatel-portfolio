@@ -14,9 +14,7 @@ export function About() {
       </Reveal>
 
       <Reveal>
-        <h3 className="mono-label" style={{ marginTop: '34px', display: 'block' }}>
-          Experience
-        </h3>
+        <h3 className="mono-label about__sub">Experience</h3>
         <div className="xp">
           {experience.map((x) => (
             <div className="xp__item" key={`${x.title}-${x.org}`}>
@@ -44,9 +42,7 @@ export function About() {
       </Reveal>
 
       <Reveal>
-        <h3 className="mono-label" style={{ marginTop: '34px', display: 'block' }}>
-          Skills
-        </h3>
+        <h3 className="mono-label about__sub">Skills</h3>
         <div className="skills">
           {skills.map((g) => (
             <div className="skills__group" key={g.group}>

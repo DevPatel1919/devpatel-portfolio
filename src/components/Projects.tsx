@@ -23,7 +23,21 @@ function Card({ project }: { project: Project }) {
       </span>
 
       <div className="project__top">
-        <h3 className="project__name">{project.name}</h3>
+        <h3 className="project__name">
+          {project.live ? (
+            <a
+              className="project__live"
+              href={project.live}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {project.name}
+              <ExternalIcon />
+            </a>
+          ) : (
+            project.name
+          )}
+        </h3>
         <span className="project__year">{project.year}</span>
       </div>
 

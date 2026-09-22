@@ -6,9 +6,15 @@ export function Hero() {
     <section className="hero" id="top">
       <div className="col">
         <div className="hero__id">
-          <span className="hero__avatar" aria-hidden="true">
-            DP
-          </span>
+          <img
+            className="hero__avatar"
+            src="/dev-patel.webp"
+            width={42}
+            height={42}
+            // The name sits directly beside this, so the photo is decorative
+            // rather than a second announcement of it.
+            alt=""
+          />
           <div>
             <div className="hero__handle">{profile.name}</div>
             <div className="hero__role">{profile.role}</div>

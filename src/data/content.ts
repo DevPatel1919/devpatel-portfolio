@@ -90,6 +90,12 @@ export type Project = {
   learned: string
   stack: string[]
   note?: EngineeringNote
+  /**
+   * Public URL of the live site. When set, the project name itself renders as
+   * a link. Only for projects that are actually reachable — a dead link on a
+   * portfolio is worse than no link.
+   */
+  live?: string
   links: Link[]
   /** Featured projects render larger and first. */
   featured?: boolean
@@ -132,29 +138,6 @@ export const projects: Project[] = [
     diagram: 'shiftly',
   },
   {
-    slug: 'drycleaners',
-    name: 'Family Dry Cleaning Business',
-    status: 'PRODUCTION',
-    year: '2026',
-    tagline: 'A website, and later a voice agent, for a business I grew up working in.',
-    problem:
-      'I spent a lot of time helping at my family’s dry cleaning business whenever it was short-staffed. The phone is relentless — the same handful of questions about hours, pricing, and whether an order is ready, usually while someone is already standing at the counter waiting.',
-    built:
-      'First a rebuilt website with real service information, hours, and contact routing. Later, an experiment with an AI voice-agent workflow for handling routine inbound calls, wired together with Twilio and n8n.',
-    hard:
-      'The website is deliberately backend-free — the contact form opens the visitor’s own mail client pre-filled, so there is no server to maintain and nothing to break. The voice agent is the opposite kind of problem: a phone call is unforgiving. There is no loading spinner, latency is immediately obvious, and being confidently wrong about a price is worse than not answering.',
-    learned:
-      'This is the project that connects the rest of them. I was not looking for something to build — I was solving a problem I had personally stood behind a counter and dealt with.',
-    stack: ['React', 'Vite', 'Twilio', 'n8n', 'Voice AI', 'Cloudflare'],
-    note: {
-      title: 'Why there is no backend',
-      body: 'A small business does not need a database to publish its hours. Anything with a server, a login, or a monthly bill becomes something that eventually breaks and needs someone technical to fix it. Composing a mailto: link means the site has no moving parts and no running costs, and the owner never has to think about it. The right architecture here was the one that disappears.',
-    },
-    links: [],
-    featured: true,
-    diagram: 'voice',
-  },
-  {
     slug: 'swapvest',
     name: 'SwapVest',
     status: 'PROTOTYPE',
@@ -173,7 +156,9 @@ export const projects: Project[] = [
       title: 'Streaming prices over SSE',
       body: 'Live pricing runs over Server-Sent Events rather than WebSockets — the data flows one way, so the simpler transport was the right one. The interesting part is failure handling: a five-state reconnect machine plus a polling fallback, because a pricing feed that silently dies is worse than one that visibly degrades. The client should always know whether what it is showing is current.',
     },
+    live: 'https://swapvest.vercel.app',
     links: [{ label: 'Live demo', href: 'https://swapvest.vercel.app' }],
+    featured: true,
     diagram: 'swapvest',
   },
   {
@@ -219,6 +204,28 @@ export const projects: Project[] = [
     },
     links: [{ label: 'View source', href: 'https://github.com/DevPatel1919/nbahistoricalmatchups' }],
     diagram: 'nba',
+  },
+  {
+    slug: 'drycleaners',
+    name: 'Family Dry Cleaning Business',
+    status: 'PRODUCTION',
+    year: '2026',
+    tagline: 'A website, and later a voice agent, for a business I grew up working in.',
+    problem:
+      'I spent a lot of time helping at my family’s dry cleaning business whenever it was short-staffed. The phone is relentless — the same handful of questions about hours, pricing, and whether an order is ready, usually while someone is already standing at the counter waiting.',
+    built:
+      'First a rebuilt website with real service information, hours, and contact routing. Later, an experiment with an AI voice-agent workflow for handling routine inbound calls, wired together with Twilio and n8n.',
+    hard:
+      'The website is deliberately backend-free — the contact form opens the visitor’s own mail client pre-filled, so there is no server to maintain and nothing to break. The voice agent is the opposite kind of problem: a phone call is unforgiving. There is no loading spinner, latency is immediately obvious, and being confidently wrong about a price is worse than not answering.',
+    learned:
+      'Software for a small business is judged on whether it keeps working without anyone tending it. That constraint ruled out most of the architecture I would have reached for by default, and the result was better for it.',
+    stack: ['React', 'Vite', 'Twilio', 'n8n', 'Voice AI', 'Cloudflare'],
+    note: {
+      title: 'Why there is no backend',
+      body: 'A small business does not need a database to publish its hours. Anything with a server, a login, or a monthly bill becomes something that eventually breaks and needs someone technical to fix it. Composing a mailto: link means the site has no moving parts and no running costs, and the owner never has to think about it. The right architecture here was the one that disappears.',
+    },
+    links: [],
+    diagram: 'voice',
   },
 ]
 
@@ -270,10 +277,9 @@ export const curious: { topic: string; question: string }[] = [
 ]
 
 export const about: string[] = [
-  'I studied Computer Science at the University of Central Florida, but most of what pushed me toward software came from outside a classroom.',
-  'I helped at my family’s dry cleaning business when it was short-staffed and watched the same repetitive work eat the day. I got interested in financial systems and built a swap platform to understand how settlement actually works. I looked at hotel operations and found processes still running on paper. I spent a long time on NBA data mostly because I wanted to know whether an argument could be settled with a model.',
-  'The pattern is consistent enough that I have stopped pretending it is a coincidence: I like finding systems that are manual, confusing, inefficient, or newly possible, and working out what software could do about them.',
-  'Right now that interest points squarely at AI-native software and agentic engineering — which is also where I spend my working hours. I am early in my career and there is a great deal I have not built yet. That is most of the appeal.',
+  'Software engineer, working professionally on full-stack products and applied AI systems. Outside of that, what I have built covers a fairly wide range: fintech settlement logic, machine learning over historical data, local-first desktop software, and operational tooling for work that still runs on paper.',
+  'The stacks change more than the interest does. Whatever the domain, what holds my attention is the same: getting underneath the abstraction to see how a system actually behaves, finding the decision that is genuinely hard rather than merely tedious, and working out what would make the thing more reliable or more capable. A good amount of that has happened outside of school and work, on projects nobody asked for.',
+  'Lately the pull is toward AI systems: agentic engineering, tool use, self-hosted models, and the less glamorous side of it, which is reliability, evaluation, and knowing when a model is the wrong tool for a step. Backend architecture and infrastructure are the other half of that problem, since a model is only as dependable as the system around it. Early in my career, and actively trying to be a better engineer than I was last year.',
 ]
 
 export type ExperienceItem = {

@@ -15,6 +15,9 @@
   --accent: #fb923c;
   --accent-dim: rgba(251, 146, 60, 0.13);
   --live: #4ade80;
+  /* Theme toggle icon runs blue, independent of the orange accent. */
+  --toggle-icon: #5e626d;
+  --toggle-icon-hover: #60a5fa;
   --grid-line: rgba(255, 255, 255, 0.028);
 }
 
@@ -30,13 +33,17 @@
   --accent: #c2410c;
   --accent-dim: rgba(194, 65, 12, 0.09);
   --live: #15803d;
+  /* Deep navy at rest so the moon reads as solid as the dark-mode sun, then
+     the usual accent on hover like every other interactive element here. */
+  --toggle-icon: #1e3a8a;
+  --toggle-icon-hover: var(--accent);
   --grid-line: rgba(0, 0, 0, 0.032);
 }
 
 :root {
   --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --col: 660px;
+  --col: 720px;
   --gutter: 20px;
   --radius: 10px;
 }
@@ -51,6 +58,11 @@
 }
 
 html {
+  /* Fluid type scale. Phones stay at 16px (the min), and the root grows to
+     18.5px by ~945px wide so body copy is comfortable on a full-screen
+     desktop without the page turning into large print. Every size in this
+     sheet is in rem, so they all scale off this one value. */
+  font-size: clamp(16.5px, 15.1px + 0.36vw, 18.5px);
   scroll-behavior: smooth;
   scroll-padding-top: 76px;
   -webkit-text-size-adjust: 100%;
@@ -65,7 +77,7 @@ body {
   color: var(--text-muted);
   font-family: var(--mono);
   font-size: 0.875rem;
-  line-height: 1.75;
+  line-height: 1.7;
   font-feature-settings: 'ss01', 'cv01';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -268,12 +280,12 @@ svg {
   border: 0;
   border-radius: 100px;
   background: transparent;
-  color: var(--text-faint);
+  color: var(--toggle-icon);
   cursor: pointer;
   transition: color 0.16s ease, background 0.16s ease;
 }
 .theme-toggle:hover {
-  color: var(--accent);
+  color: var(--toggle-icon-hover);
   background: var(--bg-hover);
 }
 
@@ -290,16 +302,13 @@ svg {
   margin-bottom: 26px;
 }
 .hero__avatar {
-  display: grid;
-  place-items: center;
+  display: block;
   width: 42px;
   height: 42px;
   border-radius: 100px;
   border: 1px solid var(--border-strong);
   background: var(--bg-raised);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: var(--text);
+  object-fit: cover;
   flex: none;
 }
 .hero__handle {
@@ -434,7 +443,7 @@ svg {
    Sections
    ============================================================ */
 .section {
-  padding: clamp(46px, 7vw, 74px) 0;
+  padding: clamp(52px, 7vw, 88px) 0;
 }
 .section__head {
   margin-bottom: 26px;
@@ -525,6 +534,32 @@ svg {
 }
 .project__name {
   font-size: 1.3rem;
+}
+/* Projects with a live site link out from the name itself. The underline is
+   faint at rest so a row of cards does not read as a wall of links, and picks
+   up the accent on hover like every other link on the page. */
+.project__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 0.18s ease, text-decoration-color 0.18s ease;
+}
+.project__live:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.project__live svg {
+  color: var(--text-faint);
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.project__live:hover svg {
+  color: var(--accent);
+  transform: translate(1px, -1px);
 }
 .project__year {
   font-size: 0.68rem;
@@ -705,12 +740,25 @@ svg {
 .about p {
   font-size: 0.85rem;
   max-width: 62ch;
+  /* Slightly wider than the global paragraph gap: this is the longest stretch of
+     prose on the page, and mono at 1.75 blurs the boundary between paragraphs. */
+  margin-bottom: 1.35em;
 }
 .about p:first-child {
   font-family: var(--serif);
   font-size: 1.18rem;
   line-height: 1.45;
   color: var(--text);
+  margin-bottom: 1.05em;
+}
+.about p:last-child {
+  margin-bottom: 0;
+}
+
+/* Sub-headings for the Experience and Skills blocks inside About. */
+.about__sub {
+  display: block;
+  margin-top: 44px;
 }
 
 .xp {
@@ -890,6 +938,7 @@ svg {
   fill: var(--text-faint);
   font-size: 7px;
 }
+
 
 /* ============================================================
    Responsive
