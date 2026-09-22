@@ -1,0 +1,197 @@
+# Scroll animations — handoff
+
+This file is the source of truth for the animation work on the portfolio. Each
+step is done in its own fresh Claude Code session. Every session should:
+
+1. Read this whole file first.
+2. Do **only** its step, following the spec below.
+3. Verify in the browser (dev server via `npm run dev`, check desktop and 375px
+   mobile, light and dark theme, and `prefers-reduced-motion: reduce`).
+4. Run `npm run typecheck` and `npm run build`.
+5. Tick its box in **Status**, add a short entry to **Log** (what changed, which
+   files, anything the next step should know).
+6. Commit the step on the **`dev`** branch (`git switch dev` first) and
+   `git push origin dev`. One commit per step, message like
+   `Animations step N: <name>`. Never commit to or push `main`, and never
+   deploy — Dev merges `dev` into `main` when ready.
+7. Tell Dev it is done and give them the prompt for the next step (from
+   **Session prompts**).
+
+## Design principles (apply to every step)
+
+The site reads as an engineer's notebook: single 720px column, Instrument Serif
+headlines, JetBrains Mono body, faint grid background, one orange accent
+(`--accent`). Motion should communicate, orient, or get out of the way.
+
+- **Durations** 200–500ms, ease-out curves (`cubic-bezier(0.2, 0.7, 0.2, 1)`
+  is the house curve). No bounce, no overshoot.
+- **Only animate `transform`, `opacity`, `clip-path`, stroke-dash
+  properties.** Nothing that causes layout shift.
+- **Content is never gated.** Nothing waits long enough for a reader to notice.
+  Keep `Reveal`'s 400px early-trigger margin.
+- **One accent motion per screen.** Orange motion is reserved for the thing
+  that matters in that view.
+- **Reduced motion** — `styles.css` ends with a `prefers-reduced-motion` block.
+  Every new effect must land in its final state there, with no delay.
+- **No new dependencies.** IntersectionObserver, CSS, and CSS scroll-driven
+  animations (`animation-timeline`) behind `@supports`, with a JS or static
+  fallback.
+- Colors only through the CSS custom properties, so both themes work.
+
+## Status
+
+- [x] **Step 1 — #9 Live architecture diagrams**
+- [ ] **Step 2 — #1 Hero load sequence**
+- [ ] **Step 3 — #4 Nav sliding highlight + scroll progress**
+- [ ] **Step 4 — #7 Self-drawing dividers**
+- [ ] **Step 5 — #8 Staggered content reveals**
+- [ ] **Step 6 — #6 Decoding section index labels (toned down)**
+- [ ] **Step 7 — #11 Experience timeline fill (line only)**
+
+## Specs
+
+### Step 1 — Live architecture diagrams (`src/components/ArchDiagram.tsx`)
+When a project's "View architecture" disclosure opens, the diagram builds in
+data-flow order: boxes scale/fade in, solid arrows draw along their path,
+arrowheads land when the line arrives, dashed arrows and labels fade in last.
+Then orange packets (dot + short trail) travel the arrows in flow order and
+loop with a rest between cycles. Dashed/return paths carry a hollow ring
+instead. Replays on every open; packets pause off-screen, when closed, and
+never run under reduced motion. Disclosures also get a height transition where
+`interpolate-size` is supported (progressive enhancement).
+
+### Step 2 — Hero load sequence (`Hero.tsx`, `styles.css`)
+Plays once on load, total under ~1s, never blocks reading.
+- Headline: each word rises ~0.4em from behind an `overflow: clip` mask,
+  40–60ms stagger. Keep the `<h1>` text intact for screen readers (wrap words
+  in `aria-hidden` spans plus a visually-hidden full copy, or `aria-label`).
+- After the words land, an orange underline draws left→right under
+  *actually happening* (`<em>`), via `scaleX` on a pseudo-element or an SVG
+  stroke. Thin (1.5–2px), slightly below the baseline.
+- Then intro paragraph, CTA row, and "Currently" block fade/rise in a short
+  cascade (~80ms apart). Avatar/name block comes in first with the headline.
+- No parallax, no scroll-linked hero effects (explicitly rejected).
+
+### Step 3 — Nav (`Nav.tsx`, `styles.css`)
+- Replace the jumping `.is-active` background with a single absolutely
+  positioned indicator that slides/resizes to the active link (measure with
+  `offsetLeft`/`offsetWidth`, transition `transform` + `width`, ~300ms). It
+  should fade out when no section is active (top of page). Handle resize and
+  font load (`document.fonts.ready`).
+- A 1px orange scroll-progress line along the bottom inner edge of
+  `.nav__pill`, `scaleX` 0→1 with page scroll. Use
+  `animation-timeline: scroll(root)` under `@supports`, rAF-throttled scroll
+  listener as fallback.
+- Keep `aria-current` behavior as is.
+
+### Step 4 — Self-drawing dividers (`hr.rule` in `App.tsx`, `styles.css`)
+Each `.rule` draws from left to right as it enters the viewport, tied to scroll
+position (`animation-timeline: view()`, range roughly `entry 0% cover 30%`),
+`transform: scaleX()` with `transform-origin: left`. Fallback for browsers
+without scroll timelines: one-shot IntersectionObserver trigger with a ~600ms
+transition. Reduced motion: fully drawn.
+
+### Step 5 — Staggered reveals (`Reveal.tsx`, section components, `styles.css`)
+Replace whole-block fades with per-item stagger where there are lists:
+Q&A items and stack chips (Building), project cards (Projects), Curious items,
+Experience items and skill groups (About). 40–60ms stagger, cap total stagger
+at ~400ms so long lists don't drag. Suggested approach: `Reveal` gains a
+`stagger` mode that sets `--i` on direct children (or children opt in via a
+`.reveal-item` class) and CSS uses `transition-delay: calc(var(--i) * 50ms)`.
+Keep the `?` glyph in `.qa__q span` rotating ~-90°→0 into place as part of its
+item's entrance. Project cards: clean rise only, **no tilt, no stamp**.
+
+### Step 6 — Decoding index labels (`Section.tsx`)
+Only the small mono `.section__index` label (e.g. `02 / WORK`). When it enters
+view, characters resolve left→right from random glyphs to the real text over
+~300ms total, once. Keep separators (`/`, spaces) fixed. Glyph pool: mono-safe
+uppercase + digits. Must not shift layout (the label is mono, so width is
+stable; set `min-width` in `ch` if needed). Real text in the DOM for screen
+readers (`aria-label` on the element, scrambled text `aria-hidden`). Serif
+`.section__title` is **not** scrambled — it may rise in with the section
+reveal. Reduced motion: no scramble.
+
+### Step 7 — Experience timeline (`About.tsx`, `styles.css`)
+A 1px vertical line down the left of `.xp`, in `--border`, with an orange
+overlay that fills top→bottom as the list scrolls through the viewport
+(`animation-timeline: view()` on `.xp`, `scaleY` with `transform-origin: top`;
+IntersectionObserver/scroll fallback). **Line only — no per-item dots.** The
+existing `.pulse` on the current job stays. Adjust `.xp__item` left padding to
+make room; check the 620px breakpoint layout.
+
+## Verification tips (learned in step 1)
+
+- When the in-app Browser pane is hidden, the page renders **no frames**:
+  `requestAnimationFrame` never fires and CSS animations don't advance, except
+  briefly while a screenshot is taken. Screenshots also come back blank when
+  the page is scrolled. Workarounds that worked:
+  - Move the element under test into a `position: fixed` overlay at the top
+    and `scrollTo(0, 0)` before screenshotting.
+  - Scrub CSS animations with `el.getAnimations({ subtree: true })` →
+    `a.pause(); a.currentTime = t`, then screenshot each state.
+  - For rAF loops, temporarily patch
+    `window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)`
+    and sample state with timers. Reload afterwards.
+- Dark theme: `document.documentElement.dataset.theme = 'dark'`.
+
+## Log
+
+### Step 1 — done
+- `ArchDiagram.tsx` rewritten. `Box`/`Arrow`/`Late` take an `at` step index that
+  drives both the build order (`--d` delay = `at * 110ms`) and packet flow
+  order (arrows sharing an `at` fire together). SVG `<marker>` arrowheads were
+  replaced with drawn arrowheads so they can appear when the line finishes
+  (also removed the duplicate `id="ah"` across diagrams).
+- `Frame` owns the behavior: listens to the parent `<details>` `toggle` event,
+  restarts the build by re-adding `.is-live`, then runs packets with one rAF
+  loop, paused by IntersectionObserver when off-screen.
+- `styles.css`: new rules under "Architecture diagrams", a `::details-content`
+  height transition under `@supports (interpolate-size: allow-keywords)`, and
+  reduced-motion overrides for `.arch`.
+
+## Session prompts
+
+Paste these one at a time into a new session.
+
+**Step 2**
+> Read `docs/animations-handoff.md` and do Step 2 (Hero load sequence) exactly
+> as specced. Only that step. Verify it in the browser (desktop + mobile, both
+> themes, reduced motion), run typecheck and build, update the Status and Log
+> in the handoff file, commit and push to the dev branch, then tell me it's done and give me the prompt for the
+> next step.
+
+**Step 3**
+> Read `docs/animations-handoff.md` and do Step 3 (Nav sliding highlight +
+> scroll progress) exactly as specced. Only that step. Verify it in the browser
+> (desktop + mobile, both themes, reduced motion), run typecheck and build,
+> update the Status and Log in the handoff file, commit and push to the dev branch, then tell me it's done and
+> give me the prompt for the next step.
+
+**Step 4**
+> Read `docs/animations-handoff.md` and do Step 4 (Self-drawing dividers)
+> exactly as specced. Only that step. Verify it in the browser (desktop +
+> mobile, both themes, reduced motion), run typecheck and build, update the
+> Status and Log in the handoff file, commit and push to the dev branch, then tell me it's done and give me the
+> prompt for the next step.
+
+**Step 5**
+> Read `docs/animations-handoff.md` and do Step 5 (Staggered reveals) exactly
+> as specced. Only that step. Verify it in the browser (desktop + mobile, both
+> themes, reduced motion), run typecheck and build, update the Status and Log
+> in the handoff file, commit and push to the dev branch, then tell me it's done and give me the prompt for the
+> next step.
+
+**Step 6**
+> Read `docs/animations-handoff.md` and do Step 6 (Decoding section index
+> labels) exactly as specced. Only that step. Verify it in the browser
+> (desktop + mobile, both themes, reduced motion), run typecheck and build,
+> update the Status and Log in the handoff file, commit and push to the dev branch, then tell me it's done and
+> give me the prompt for the next step.
+
+**Step 7**
+> Read `docs/animations-handoff.md` and do Step 7 (Experience timeline) exactly
+> as specced. Only that step. Verify it in the browser (desktop + mobile, both
+> themes, reduced motion), run typecheck and build, update the Status and Log
+> in the handoff file. This is the last step: finish with a quick pass over
+> the whole page to make sure all seven effects work together (nothing
+> competing on one screen, reduced motion clean), then tell me it's done.

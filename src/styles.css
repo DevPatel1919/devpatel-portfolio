@@ -939,6 +939,95 @@ svg {
   font-size: 7px;
 }
 
+/* Build-in: the diagram assembles in flow order each time it opens. --d is
+   set per element from its step in ArchDiagram.tsx. */
+.arch .arch-node,
+.arch .arch-fade,
+.arch .arch-head,
+.arch .arch-arrow .arch-dash {
+  opacity: 0;
+}
+.arch .arch-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.arch .arch-arrow .arch-line:not(.arch-dash) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.arch.is-live .arch-node {
+  animation: arch-node 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d) both;
+}
+.arch.is-live .arch-fade,
+.arch.is-live .arch-arrow .arch-dash {
+  animation: arch-fade 0.4s ease-out var(--d) both;
+}
+.arch.is-live .arch-arrow .arch-line:not(.arch-dash) {
+  animation: arch-draw 0.28s cubic-bezier(0.4, 0, 0.2, 1) var(--d) both;
+}
+.arch.is-live .arch-head {
+  animation: arch-fade 0.14s ease-out calc(var(--d) + 0.24s) both;
+}
+@keyframes arch-node {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes arch-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes arch-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Packets travelling the arrows once the build finishes (driven from JS). */
+.arch-flow {
+  pointer-events: none;
+}
+.arch .arch-trail {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+.arch .arch-dot {
+  fill: var(--accent);
+}
+.arch .arch-dot--ring {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 1;
+}
+.arch .arch-halo {
+  fill: var(--accent);
+}
+
+/* Smooth open/close for disclosures where the browser can animate to auto. */
+@supports (interpolate-size: allow-keywords) {
+  .disclosure {
+    interpolate-size: allow-keywords;
+  }
+  .disclosure::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), content-visibility 0.3s allow-discrete;
+  }
+  .disclosure[open]::details-content {
+    height: auto;
+  }
+}
 
 /* ============================================================
    Responsive
@@ -998,6 +1087,17 @@ svg {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .arch .arch-node,
+  .arch .arch-fade,
+  .arch .arch-head,
+  .arch .arch-arrow .arch-dash {
+    opacity: 1;
+    animation: none !important;
+  }
+  .arch .arch-arrow .arch-line:not(.arch-dash) {
+    stroke-dashoffset: 0;
+    animation: none !important;
   }
   *,
   *::before,
