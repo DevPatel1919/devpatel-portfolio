@@ -157,6 +157,34 @@ svg {
     transparent 4px 9px
   );
 }
+/* Draws left to right on the way into view. A clip wipe rather than scaleX,
+   so the dashes keep their size instead of smearing while it draws. */
+@supports (animation-timeline: view()) {
+  .rule {
+    animation-name: rule-draw;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+@keyframes rule-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+/* Fallback: Rule.tsx arms the line and an IntersectionObserver plays it once. */
+.rule.is-armed {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.rule.is-armed.is-in {
+  clip-path: inset(0 0 0 0);
+}
 
 /* ============================================================
    Shared primitives
@@ -1265,6 +1293,13 @@ svg {
      duration back, since `auto` is what makes it span the whole scroll. */
   .nav__progress {
     animation-duration: auto !important;
+  }
+  /* Dividers are simply drawn. `animation: none` rather than the blanket
+     duration override, which on a view timeline would leave each line
+     clipped until it reached the start of its range. */
+  .rule {
+    animation: none !important;
+    clip-path: none !important;
   }
   *,
   *::before,

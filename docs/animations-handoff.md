@@ -43,7 +43,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 - [x] **Step 1 — #9 Live architecture diagrams**
 - [x] **Step 2 — #1 Hero load sequence**
 - [x] **Step 3 — #4 Nav sliding highlight + scroll progress**
-- [ ] **Step 4 — #7 Self-drawing dividers**
+- [x] **Step 4 — #7 Self-drawing dividers**
 - [ ] **Step 5 — #8 Staggered content reveals**
 - [ ] **Step 6 — #6 Decoding section index labels (toned down)**
 - [ ] **Step 7 — #11 Experience timeline fill (line only)**
@@ -210,6 +210,41 @@ make room; check the 620px breakpoint layout.
 - For later steps: `scroll(root)` and `view()` both work in this browser, so
   step 4 and step 7 can rely on the same `@supports` pattern. The pill's
   orange line is the one accent motion once you have scrolled past the hero.
+
+### Step 4 — done
+- New `src/components/Rule.tsx` replaces the four `<hr className="rule" />`
+  in `App.tsx`. It renders the same `hr.rule`; its only job is the fallback.
+- Deviation from the spec, on purpose: the draw is a `clip-path` wipe
+  (`inset(0 100% 0 0)` → `inset(0)`), not `scaleX`. The rule is a dashed
+  `repeating-linear-gradient`, and scaling it would squash the dashes into a
+  smear that stretches out as it draws; the clip keeps every dash its true
+  size. `clip-path` is on the allowed-properties list.
+- `styles.css`, right under `.rule`: `rule-draw` keyframes on
+  `animation-timeline: view()` with `animation-range: entry 0% cover 30%`,
+  under `@supports (animation-timeline: view())`. Verified in the browser:
+  12% into the viewport the line is ~42% drawn, fully drawn by 30%, rules
+  further down stay undrawn until reached, and the last rule (above Contact)
+  still finishes when the page is scrolled to the very bottom.
+- Fallback: `Rule.tsx` checks `CSS.supports('animation-timeline', 'view()')`
+  and only otherwise adds `.is-armed` (hidden, 0.6s house-curve transition on
+  `clip-path`) and a one-shot IntersectionObserver that adds `.is-in`. The
+  line is only hidden once JS has armed it. The observer uses a -12% bottom
+  margin rather than Reveal's +400px: dividers are decoration, so the draw
+  should happen where it can be seen.
+- Reduced motion: `.rule { animation: none !important; clip-path: none
+  !important }`. The blanket `animation-duration: 0.001ms` override is not
+  enough on a view timeline — each rule would stay clipped until it reached
+  the start of its range. Verified by applying the reduced-motion block
+  unconditionally: no animations on any rule, all drawn.
+- The dividers are `--border-strong`, not orange, so they don't compete with
+  the nav progress line for the one accent motion.
+- Verification gap: the browser window refused to resize to 375px in this
+  session, so mobile was not screenshotted. The effect is a percentage clip on
+  a full-width line with no breakpoint-dependent styles, so it should be
+  identical, but give it a look on a phone.
+- For step 7: the same `view()` + `@supports` + armed-fallback pattern should
+  carry over to the timeline fill, and it needs the same explicit
+  reduced-motion `animation: none`.
 
 ## Session prompts
 

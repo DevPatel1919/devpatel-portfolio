@@ -7,6 +7,7 @@ import { Curious } from './components/Curious'
 import { About } from './components/About'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
+import { Rule } from './components/Rule'
 
 export default function App() {
   return (
@@ -19,13 +20,13 @@ export default function App() {
         <Hero />
         <Marquee />
         <Building />
-        <hr className="rule" />
+        <Rule />
         <Projects />
-        <hr className="rule" />
+        <Rule />
         <Curious />
-        <hr className="rule" />
+        <Rule />
         <About />
-        <hr className="rule" />
+        <Rule />
         <Contact />
       </main>
       <Footer />
