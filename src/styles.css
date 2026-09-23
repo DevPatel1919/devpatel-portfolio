@@ -241,6 +241,7 @@ svg {
   background: linear-gradient(var(--bg) 62%, transparent);
 }
 .nav__pill {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -252,19 +253,74 @@ svg {
   -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
 .nav__pill a {
+  /* Positioned so the links paint above the indicator sliding behind them. */
+  position: relative;
+  z-index: 1;
   padding: 5px 12px;
   border-radius: 100px;
   font-size: 0.72rem;
   letter-spacing: 0.01em;
   color: var(--text-faint);
-  transition: color 0.16s ease, background 0.16s ease;
+  transition: color 0.16s ease;
 }
 .nav__pill a:hover {
   color: var(--text);
 }
 .nav__pill a.is-active {
   color: var(--text);
+}
+
+/* One pill that slides and resizes between the links, instead of a background
+   that jumps from one to the next. Nav.tsx measures the active link and writes
+   width/height/transform; here it only needs to know how to move. */
+.nav__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  border-radius: 100px;
   background: var(--bg-hover);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+    width 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.22s ease;
+}
+.nav__indicator.is-on {
+  opacity: 1;
+}
+
+/* Read-through progress, along the bottom inside the pill. Inset from the ends
+   so both tips stay clear of the capsule's curve. */
+.nav__progress {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 1px;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--accent);
+  pointer-events: none;
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
+}
+@supports (animation-timeline: scroll()) {
+  .nav__progress {
+    animation-name: nav-progress;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 .nav__divider {
   width: 1px;
@@ -1202,6 +1258,13 @@ svg {
     animation: none !important;
     opacity: 1;
     transform: none;
+  }
+  /* The indicator snaps to the active link via the blanket transition
+     override below. The progress line only ever moves as far as the reader
+     scrolls it, so it keeps tracking — but it needs its scroll-timeline
+     duration back, since `auto` is what makes it span the whole scroll. */
+  .nav__progress {
+    animation-duration: auto !important;
   }
   *,
   *::before,

@@ -42,7 +42,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 
 - [x] **Step 1 — #9 Live architecture diagrams**
 - [x] **Step 2 — #1 Hero load sequence**
-- [ ] **Step 3 — #4 Nav sliding highlight + scroll progress**
+- [x] **Step 3 — #4 Nav sliding highlight + scroll progress**
 - [ ] **Step 4 — #7 Self-drawing dividers**
 - [ ] **Step 5 — #8 Staggered content reveals**
 - [ ] **Step 6 — #6 Decoding section index labels (toned down)**
@@ -175,6 +175,41 @@ make room; check the 620px breakpoint layout.
   `.hero .now` now carry an `animation`, so anything that wants to animate
   those elements later should extend `hero-in` rather than add a second
   animation to them.
+
+### Step 3 — done
+- `Nav.tsx`: the active-link background is gone. A single `.nav__indicator`
+  span is the first child of the pill; `place(id, instant)` measures the
+  active link's `offsetLeft/Top/Width/Height` and writes `width`/`height`/
+  `transform` onto it. `instant` suppresses the slide, used for the first
+  appearance and for re-measures, so the indicator only travels in response
+  to reading. When nothing is active it fades out but keeps its last
+  position, so it never slides home to the left edge on the way out.
+- Re-measuring is a `ResizeObserver` on `.nav__pill` plus `document.fonts.
+  ready` — the observer covers window resizes and anything else that reflows
+  the pill (the 620px breakpoint changes link padding and font size), and the
+  fonts promise covers JetBrains Mono swapping in for the fallback.
+- `aria-current` is unchanged, and `.is-active` now only carries the text
+  color. `.nav__pill a` gained `position: relative; z-index: 1` so the links
+  paint above the indicator sliding behind them.
+- `.nav__progress` is a 1px `--accent` hairline inset 13px from each end of
+  the pill and 1px up from the bottom, so both tips stay clear of the
+  capsule's curve (checked at both breakpoints: ~2.7px clearance on desktop,
+  ~4px on mobile). It runs off `animation-timeline: scroll(root block)` under
+  `@supports`; `Nav.tsx` only installs the rAF-throttled scroll listener when
+  `CSS.supports('animation-timeline', 'scroll()')` is false, and that
+  fallback writes a `--p` custom property that the base `transform:
+  scaleX(var(--p, 0))` reads. Both paths verified to track scroll exactly
+  (the fallback by temporarily forcing the branch).
+- Reduced motion needed one non-obvious line: the global block's
+  `animation-duration: 0.001ms !important` would collapse the whole scroll
+  timeline into the first instant of scrolling, leaving the line permanently
+  full. `.nav__progress { animation-duration: auto !important }` gives it
+  back. The line itself keeps tracking, since it only ever moves as far as
+  the reader scrolls it; the indicator snaps instead of sliding, which the
+  global transition override already handles.
+- For later steps: `scroll(root)` and `view()` both work in this browser, so
+  step 4 and step 7 can rely on the same `@supports` pattern. The pill's
+  orange line is the one accent motion once you have scrolled past the hero.
 
 ## Session prompts
 
