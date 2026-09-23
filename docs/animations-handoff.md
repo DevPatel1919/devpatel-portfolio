@@ -41,7 +41,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 ## Status
 
 - [x] **Step 1 — #9 Live architecture diagrams**
-- [ ] **Step 2 — #1 Hero load sequence**
+- [x] **Step 2 — #1 Hero load sequence**
 - [ ] **Step 3 — #4 Nav sliding highlight + scroll progress**
 - [ ] **Step 4 — #7 Self-drawing dividers**
 - [ ] **Step 5 — #8 Staggered content reveals**
@@ -148,6 +148,33 @@ make room; check the 620px breakpoint layout.
 - `styles.css`: new rules under "Architecture diagrams", a `::details-content`
   height transition under `@supports (interpolate-size: allow-keywords)`, and
   reduced-motion overrides for `.arch`.
+
+### Step 2 — done
+- `Hero.tsx`: the headline is now built from a local `Word` component — a
+  masked `.word` wrapper around a `.word__in` that does the moving. `at` sets
+  the word's place in the sequence (`--w`), `mark` opts a word into the
+  underline and sets its draw order (`--u`). The word spans are
+  `aria-hidden`; the sentence lives on the `<h1>`'s `aria-label`, so the
+  accessible name is unchanged. The closing period shares `--w` with
+  "happening" so they rise together, and line breaking never separates them.
+- `styles.css`: a "Load sequence" block under Hero. Word timings come from
+  `--hero-word-start/step/dur` on `.hero` (50ms + 38ms stagger x 0.34s), the
+  underline draws per em word at 0.70s/0.78s, and `.hero__id` / `.hero__intro`
+  / `.hero__cta` / `.hero .now` cascade off `--hero-d` (0.02/0.46/0.54/0.62s).
+  Last thing finishes at ~1.08s. New reduced-motion rules put all of it —
+  including the underline pseudo-elements — in the final state with no delay,
+  which matters here because the global reduced-motion block zeroes animation
+  *durations* but not *delays*.
+- The `.word` mask uses `padding: 0 0.06em 0.16em` with matching negative
+  margins, so descenders and italic overhang have room inside the clip box
+  while the line box and the headline's wrapping stay byte-identical to
+  before (verified by measuring a plain-markup clone: same 4 lines, same
+  236.94px height).
+- Worth knowing for later steps: the hero's one accent motion is the
+  underline, so don't add orange movement above the fold. `.hero__cta` and
+  `.hero .now` now carry an `animation`, so anything that wants to animate
+  those elements later should extend `hero-in` rather than add a second
+  animation to them.
 
 ## Session prompts
 

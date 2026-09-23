@@ -346,6 +346,100 @@ svg {
   gap: 8px;
 }
 
+/* Load sequence — plays once, finishes in about a second, and never holds the
+   text back: the words are legible as they rise and every block below is in
+   place by the time the underline finishes. Timings live in one place so the
+   whole cascade can be retuned from here. */
+.hero {
+  --hero-curve: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --hero-word-start: 0.05s;
+  --hero-word-step: 38ms;
+  --hero-word-dur: 0.34s;
+}
+.hero__headline .word {
+  display: inline-block;
+  /* Descenders and italic overhang need room inside the mask; the matching
+     negative margins hand that room straight back, so the line box and the
+     wrapping of the headline are exactly what they were. */
+  padding: 0 0.06em 0.16em;
+  margin: 0 -0.06em -0.16em;
+  overflow: hidden;
+  overflow: clip;
+}
+.hero__headline .word__in {
+  display: inline-block;
+  position: relative;
+  animation: hero-word var(--hero-word-dur) var(--hero-curve)
+    calc(var(--hero-word-start) + var(--w) * var(--hero-word-step)) both;
+}
+@keyframes hero-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The one piece of accent motion on this screen: a hairline that draws under
+   the emphasized phrase once its words have landed. It is drawn per word so a
+   wrap at narrow widths still underlines both halves correctly. */
+.hero__headline .word--mark .word__in::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: hero-underline 0.24s var(--hero-curve) calc(0.7s + var(--u) * 0.08s) both;
+}
+@keyframes hero-underline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero__id,
+.hero__intro,
+.hero__cta,
+.hero .now {
+  animation: hero-in 0.46s var(--hero-curve) var(--hero-d) both;
+}
+/* The name block arrives with the headline; the rest cascades after it. */
+.hero__id {
+  --hero-d: 0.02s;
+}
+.hero__intro {
+  --hero-d: 0.46s;
+}
+.hero__cta {
+  --hero-d: 0.54s;
+}
+.hero .now {
+  --hero-d: 0.62s;
+}
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Currently block */
 .now {
   margin-top: 34px;
@@ -1098,6 +1192,16 @@ svg {
   .arch .arch-arrow .arch-line:not(.arch-dash) {
     stroke-dashoffset: 0;
     animation: none !important;
+  }
+  .hero__headline .word__in,
+  .hero__headline .word--mark .word__in::after,
+  .hero__id,
+  .hero__intro,
+  .hero__cta,
+  .hero .now {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
   }
   *,
   *::before,
