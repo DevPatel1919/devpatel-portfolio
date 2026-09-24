@@ -45,7 +45,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 - [x] **Step 3 — #4 Nav sliding highlight + scroll progress**
 - [x] **Step 4 — #7 Self-drawing dividers**
 - [x] **Step 5 — #8 Staggered content reveals**
-- [ ] **Step 6 — #6 Decoding section index labels (toned down)**
+- [x] **Step 6 — #6 Decoding section index labels (toned down)**
 - [ ] **Step 7 — #11 Experience timeline fill (line only)**
 
 ## Specs
@@ -285,6 +285,37 @@ make room; check the 620px breakpoint layout.
   horizontal overflow, wrapped questions look right.
 - Testing gotcha: `document.getAnimations().forEach(a => a.finish())` throws
   on the infinite marquee; filter to finite ones.
+
+### Step 6 — done
+- `Section.tsx`: the label is now a local `SectionIndex` component. Letters
+  and digits resolve left to right from random `A-Z0-9` glyphs over 300ms,
+  unresolved ones reshuffling every 45ms; `/` and spaces are fixed from the
+  start. Timing is by `performance.now()`, not frame count, so a slow or
+  throttled frame just skips ahead. Plays once, triggered by an
+  IntersectionObserver with no early margin (it should be seen), then the
+  observer disconnects and the rAF loop ends.
+- The scrambled text is written in a `useLayoutEffect`, before first paint,
+  so the real text never flashes ahead of the scramble. The DOM is written
+  directly (`textContent` on the aria-hidden span), no React re-renders.
+- Accessibility deviation: instead of `aria-label` on the element, the real
+  text lives in a new `.sr-only` span and the animated copy is
+  `aria-hidden`. The label is a plain `<span>`, and ARIA doesn't allow naming
+  generic elements — screen readers often skip `aria-label` there. `.sr-only`
+  is a new utility in `styles.css` next to `.skip-link`.
+- No layout shift: every label measured the same width scrambled and real
+  (e.g. 176.31px for `03 / OPEN QUESTIONS`), no `min-width` needed.
+- `.section__title` untouched (the spec's "may rise in" was optional; left
+  out to keep this step to the label).
+- Reduced motion: checked via `matchMedia` at mount; the label is never
+  scrambled. Verified by loading the page in an iframe with `matchMedia`
+  shimmed before the app ran — all five labels real from the start.
+- Verified the decode by driving rAF by hand with synthetic 16ms timestamps:
+  `X4 / IVGC PPZPIAM7J` -> ... -> `03 / OPEN QUESTIONS` at 304ms, strictly
+  left to right, loop stops. Mobile at 375px (iframe) and light theme look
+  right; no console errors.
+- Testing tip: the srcdoc-iframe trick (fetch `/`, inject a `<script>` at
+  the top of `<head>`, set as `srcdoc`) is the way to test anything that
+  reads `matchMedia` or other globals at mount time.
 
 ## Session prompts
 
