@@ -255,6 +255,34 @@ svg {
   opacity: 1;
   transform: none;
 }
+/* Staggered variant: Reveal.tsx watches each `.reveal-item` and hands the ones
+   that arrive together a cascading `--reveal-delay` (50ms steps, 400ms cap).
+   An animation rather than a transition, so items keep their own hover
+   transitions. Fill is `backwards` only: the delay holds the start state, and
+   the settled state is just the element's normal styles. */
+.reveal-item:not(.is-in) {
+  opacity: 0;
+}
+.reveal-item.is-in {
+  animation: reveal-rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms)
+    backwards;
+}
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* The Q&A `?` turns into place as its item rises. */
+.qa__item.is-in .qa__q span {
+  animation: qa-glyph 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms)
+    backwards;
+}
+@keyframes qa-glyph {
+  from {
+    transform: rotate(-90deg);
+  }
+}
 
 /* ============================================================
    Nav — small centered pill
@@ -676,6 +704,9 @@ svg {
 .qa__q span {
   color: var(--accent);
   flex: none;
+  /* One line tall rather than stretched, so it turns about the glyph itself
+     even when the question wraps. */
+  align-self: flex-start;
 }
 .qa__a {
   font-size: 0.79rem;
@@ -1265,6 +1296,13 @@ svg {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  /* `animation: none`, not just the blanket duration override, which leaves
+     the stagger delays in place and would pop items in up to 400ms late. */
+  .reveal-item,
+  .qa__item .qa__q span {
+    opacity: 1 !important;
+    animation: none !important;
   }
   .arch .arch-node,
   .arch .arch-fade,

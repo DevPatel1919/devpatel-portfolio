@@ -44,7 +44,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 - [x] **Step 2 — #1 Hero load sequence**
 - [x] **Step 3 — #4 Nav sliding highlight + scroll progress**
 - [x] **Step 4 — #7 Self-drawing dividers**
-- [ ] **Step 5 — #8 Staggered content reveals**
+- [x] **Step 5 — #8 Staggered content reveals**
 - [ ] **Step 6 — #6 Decoding section index labels (toned down)**
 - [ ] **Step 7 — #11 Experience timeline fill (line only)**
 
@@ -245,6 +245,46 @@ make room; check the 620px breakpoint layout.
 - For step 7: the same `view()` + `@supports` + armed-fallback pattern should
   carry over to the timeline fill, and it needs the same explicit
   reduced-motion `animation: none`.
+
+### Step 5 — done
+- `Reveal.tsx` gained `stagger`. In that mode the wrapper (`.reveal-group`)
+  doesn't fade; it observes every descendant `.reveal-item` **individually**
+  (same 400px early margin), and the items that come in on one observer
+  callback get `--reveal-delay` of 0/50/100ms... in document order, capped at
+  400ms. Deviation from the suggested approach (one trigger + `--i` index):
+  project cards are ~800-980px tall and the Experience/skills lists are long,
+  so a single trigger would play items far below the fold before anyone got
+  there. Per-item observation keeps the stagger for items that arrive
+  together and still gives later items their own entrance when scrolled to.
+- Opted in: Building — body, each Q&A item, each stack chip; Projects — each
+  card (the per-card `Reveal`s became one stagger group, with a plain
+  `.reveal-item` div per card so the `.projects` grid structure is unchanged);
+  Curious — each item; About — the "Experience" label + each `.xp__item`, the
+  "Skills" label + each `.skills__group`. The About paragraphs and Contact
+  still use the plain whole-block `Reveal`.
+- `styles.css`: the entrance is an **animation** (`reveal-rise`, 0.45s house
+  curve, `backwards` fill), not a transition, because `.qa__item`,
+  `.project` etc. have their own hover transitions that a `transition`
+  shorthand would have overwritten. Before `.is-in`, items sit at
+  `opacity: 0`. The Q&A `?` runs `qa-glyph` (-90deg -> 0) with the same
+  delay, and `.qa__q span` got `align-self: flex-start` so it rotates about
+  the glyph rather than the middle of a stretched two-line box (this also
+  pins it to the first line when a question wraps, which it already
+  visually was). No tilt, no stamp on cards.
+- Reduced motion: `.reveal-item, .qa__item .qa__q span { opacity: 1
+  !important; animation: none !important }`. The `!important` on opacity is
+  needed because `.reveal-item:not(.is-in)` out-specifies a plain
+  `.reveal-item`; and `animation: none` is needed because the global block
+  zeroes durations but not delays.
+- Verified: delays read 0/50/.../400 capped in every group; mid-flight
+  scrub at 180ms showed the Q&A cascade (opacity .88 -> .24) and glyphs at
+  -11/-20/-37/-68deg; cards skipped by a jump reveal on scroll-back with their
+  own cascade; light + dark; reduced-motion block applied unconditionally
+  leaves nothing hidden or animating; no console errors. Mobile checked at
+  375px in a same-origin iframe (the window refused to resize) — no
+  horizontal overflow, wrapped questions look right.
+- Testing gotcha: `document.getAnimations().forEach(a => a.finish())` throws
+  on the infinite marquee; filter to finite ones.
 
 ## Session prompts
 

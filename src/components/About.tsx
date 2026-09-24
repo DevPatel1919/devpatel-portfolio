@@ -13,11 +13,11 @@ export function About() {
         </div>
       </Reveal>
 
-      <Reveal>
-        <h3 className="mono-label about__sub">Experience</h3>
+      <Reveal stagger>
+        <h3 className="mono-label about__sub reveal-item">Experience</h3>
         <div className="xp">
           {experience.map((x) => (
-            <div className="xp__item" key={`${x.title}-${x.org}`}>
+            <div className="xp__item reveal-item" key={`${x.title}-${x.org}`}>
               <div>
                 <div className="xp__title">{x.title}</div>
                 <div className="xp__org">
@@ -41,11 +41,11 @@ export function About() {
         </div>
       </Reveal>
 
-      <Reveal>
-        <h3 className="mono-label about__sub">Skills</h3>
+      <Reveal stagger>
+        <h3 className="mono-label about__sub reveal-item">Skills</h3>
         <div className="skills">
           {skills.map((g) => (
-            <div className="skills__group" key={g.group}>
+            <div className="skills__group reveal-item" key={g.group}>
               <div className="skills__label">{g.group}</div>
               <div className="chips">
                 {g.items.map((i) => (

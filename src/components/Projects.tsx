@@ -107,13 +107,15 @@ export function Projects() {
       title="Featured work"
       lede="Five projects, weighted by how much of my own thinking is in them. Some live in private repositories, so the write-ups carry the detail instead of a link."
     >
-      <div className="projects">
-        {projects.map((p) => (
-          <Reveal key={p.slug}>
-            <Card project={p} />
-          </Reveal>
-        ))}
-      </div>
+      <Reveal stagger>
+        <div className="projects">
+          {projects.map((p) => (
+            <div className="reveal-item" key={p.slug}>
+              <Card project={p} />
+            </div>
+          ))}
+        </div>
+      </Reveal>
     </Section>
   )
 }

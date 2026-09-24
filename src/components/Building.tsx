@@ -10,15 +10,15 @@ export function Building() {
       title="What I'm building"
       lede="High-level by design — the engineering problems, not any employer's implementation."
     >
-      <Reveal>
-        <div className="building__body">
+      <Reveal stagger>
+        <div className="building__body reveal-item">
           <p>{building.lede}</p>
           <p>{building.body}</p>
         </div>
 
         <div className="qa">
           {building.questions.map((item) => (
-            <div className="qa__item" key={item.q}>
+            <div className="qa__item reveal-item" key={item.q}>
               <div className="qa__q">
                 <span aria-hidden="true">?</span>
                 {item.q}
@@ -30,7 +30,7 @@ export function Building() {
 
         <div className="chips">
           {building.stack.map((s) => (
-            <span key={s} className="chip">
+            <span key={s} className="chip reveal-item">
               {s}
             </span>
           ))}
