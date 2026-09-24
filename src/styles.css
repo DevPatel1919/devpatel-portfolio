@@ -983,14 +983,59 @@ svg {
 }
 
 .xp {
+  position: relative;
   display: grid;
   gap: 0;
+  /* The timeline's viewport is narrowed to a thin reading band 55-60% down
+     the screen, so the fill's tip follows the reader's eye rather than the
+     viewport edges: it starts as the list's top crosses the band and is full
+     as its bottom does. */
+  view-timeline: --xp block;
+  view-timeline-inset: 55% 40%;
+}
+/* Timeline: a 1px track down the left, with an orange fill that grows from
+   the top as the list is read. Line only, no per-item markers. */
+.xp::before,
+.xp::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  pointer-events: none;
+}
+.xp::before {
+  background: var(--border);
+}
+.xp::after {
+  background: var(--accent);
+  transform: scaleY(var(--xp-p, 0));
+  transform-origin: top;
+}
+@supports (animation-timeline: view()) {
+  .xp::after {
+    animation-name: xp-fill;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: --xp;
+    animation-range: cover 0% cover 100%;
+  }
+}
+@keyframes xp-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 .xp__item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 6px 16px;
-  padding: 17px 0;
+  padding: 17px 0 17px 22px;
   border-bottom: 1px solid var(--border);
 }
 .xp__item:last-child {
@@ -1278,6 +1323,7 @@ svg {
   }
   .xp__item {
     grid-template-columns: 1fr;
+    padding-left: 16px;
   }
   .xp__period {
     padding-top: 0;
@@ -1350,6 +1396,11 @@ svg {
   .rule {
     animation: none !important;
     clip-path: none !important;
+  }
+  /* The timeline is simply full. */
+  .xp::after {
+    animation: none !important;
+    transform: none !important;
   }
   *,
   *::before,

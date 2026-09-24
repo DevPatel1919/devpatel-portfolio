@@ -46,7 +46,7 @@ headlines, JetBrains Mono body, faint grid background, one orange accent
 - [x] **Step 4 — #7 Self-drawing dividers**
 - [x] **Step 5 — #8 Staggered content reveals**
 - [x] **Step 6 — #6 Decoding section index labels (toned down)**
-- [ ] **Step 7 — #11 Experience timeline fill (line only)**
+- [x] **Step 7 — #11 Experience timeline fill (line only)**
 
 ## Specs
 
@@ -316,6 +316,49 @@ make room; check the 620px breakpoint layout.
 - Testing tip: the srcdoc-iframe trick (fetch `/`, inject a `<script>` at
   the top of `<head>`, set as `srcdoc`) is the way to test anything that
   reads `matchMedia` or other globals at mount time.
+
+### Step 7 — done
+- `styles.css`: `.xp` is `position: relative` and carries a named
+  `view-timeline: --xp block`. `.xp::before` is the 1px `--border` track,
+  `.xp::after` the `--accent` fill (`scaleY`, `transform-origin: top`) on
+  `animation-timeline: --xp`, range `cover 0% cover 100%`, under
+  `@supports (animation-timeline: view())`. No per-item dots; the existing
+  item border-bottoms meet the track, and `.pulse` is untouched.
+- The fill tracks a reading line rather than the viewport edges:
+  `view-timeline-inset: 55% 40%` narrows the timeline's viewport to a thin
+  band 55-60% down the screen, so the fill starts as the list's top crosses
+  it and is full as its bottom does. (Plain `view()` over the full viewport
+  would have the line either racing ahead of or lagging far behind what's
+  being read.) Verified: 30% of the list past the line -> 0.312 fill,
+  75% -> 0.736.
+- Fallback: `useTimelineFallback` in `About.tsx` — only when
+  `CSS.supports('animation-timeline', 'view()')` is false, an
+  IntersectionObserver attaches a rAF-throttled scroll/resize listener
+  while the list is on screen and writes `--xp-p` from the same reading line
+  (`READING_LINE = 0.575`), with one last update when it leaves so a fast
+  scroll can't strand the fill. Verified in a srcdoc iframe with
+  `CSS.supports` shimmed: 0.500 at 50%, 0.201 at 20%.
+- `.xp__item` left padding 22px (16px under 620px). Mobile checked at 375px:
+  no overflow.
+- Reduced motion: `.xp::after { animation: none; transform: none }` — the
+  line is simply full.
+
+### Whole-page pass
+- Reduced motion, all seven together (reduced-motion block applied
+  unconditionally + `matchMedia` shimmed, every `<details>` opened): hero
+  words/underline/cascade final, nav progress keeps `animation-duration:
+  auto` and tracks, all four dividers drawn with no animations, 0 hidden
+  reveal items or blocks, all labels real text, timeline full, 0 hidden
+  diagram parts. No console errors.
+- Accent-motion inventory: hero underline (load, nav line still at 0);
+  nav progress line (always, once scrolling); Q&A `?` glyphs (brief, on
+  entry); architecture packets (only after opening a diagram); timeline
+  fill (About). The one place two orange motions share a screen for long is
+  About, where the timeline fill and the nav progress line both advance with
+  scroll. They are both 1px lines moving in step with the reader, so they
+  read as one "progress" language rather than competing — but if it feels
+  busy, the easy lever is making the timeline fill `--text-muted` instead of
+  `--accent`.
 
 ## Session prompts
 
